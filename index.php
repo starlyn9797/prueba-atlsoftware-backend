@@ -13,7 +13,7 @@ use App\Presentation\Http\JsonResponse;
 use App\Presentation\Http\Router;
 
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -39,6 +39,7 @@ try {
         ->get('/contacts',         [$controller, 'index'])
         ->get('/contacts/{id}',    [$controller, 'show'])
         ->post('/contacts',        [$controller, 'store'])
+        ->put('/contacts/{id}',    [$controller, 'update'])
         ->delete('/contacts/{id}', [$controller, 'destroy']);
 
     $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

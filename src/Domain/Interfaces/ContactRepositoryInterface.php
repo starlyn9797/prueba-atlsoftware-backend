@@ -12,7 +12,9 @@ interface ContactRepositoryInterface
 
     public function create(array $contact, array $phones = []): int;
 
+    public function update(int $id, array $contact, array $phones = []): bool;
+
     public function delete(int $id): bool;
 
-    public function existsWithEmail(string $email): bool;
+    public function existsWithEmail(string $email, ?int $excludeId = null): bool;
 }

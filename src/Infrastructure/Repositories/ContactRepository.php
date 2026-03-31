@@ -94,10 +94,68 @@ final class ContactRepository implements ContactRepositoryInterface
         return $stmt->rowCount() > 0;
     }
 
-    public function existsWithEmail(string $email): bool
+    public function update(int $id, array $contact, array $phones = []): bool
     {
-        $stmt = $this->pdo->prepare('SELECT 1 FROM contacts WHERE email = :email LIMIT 1');
-        $stmt->execute(['email' => $email]);
+        $this->pdo->beginTransaction();
+
+        try {
+            $stmt = $this->pdo->prepare('
+                UPDATE contacts SET first_name = :first_name, last_name = :last_name, email = :email
+                WHERE id = :id
+            ');
+            $stmt->execute([
+                'id'         => $id,
+                'first_name' => $contact['first_name'],
+                'last_name'  => $contact['last_name'],
+                'email'      => $contact['email'],
+            ]);
+
+            if ($stmt->rowCount() === 0) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            $this->pdo->prepare('DELETE FROM phones WHERE contact_id = :contact_id')
+                ->execute(['contact_id' => $id]);
+
+            if (count($phones) > 0) {
+                $phoneStatement = $this->pdo->prepare('
+                    INSERT INTO phones (contact_id, phone_number, label)
+                    VALUES (:contact_id, :phone_number, :label)
+                ');
+
+                foreach ($phones as $phone) {
+                    $phoneStatement->execute([
+                        'contact_id'   => $id,
+                        'phone_number' => $phone['phone_number'],
+                        'label'        => $phone['label'] ?? 'mobile',
+                    ]);
+                }
+            }
+
+            $this->pdo->commit();
+            return true;
+
+        } catch (\Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    public function existsWithEmail(string $email, ?int $excludeId = null): bool
+    {
+        $sql    = 'SELECT 1 FROM contacts WHERE email = :email';
+        $params = ['email' => $email];
+
+        if ($excludeId !== null) {
+            $sql              .= ' AND id != :exclude_id';
+            $params['exclude_id'] = $excludeId;
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
 
         return $stmt->fetchColumn() !== false;
     }

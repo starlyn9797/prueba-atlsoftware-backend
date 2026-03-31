@@ -22,6 +22,11 @@ final class Router
         return $this->addRoute('POST', $path, $handler);
     }
 
+    public function put(string $path, callable $handler): self
+    {
+        return $this->addRoute('PUT', $path, $handler);
+    }
+
     public function delete(string $path, callable $handler): self
     {
         return $this->addRoute('DELETE', $path, $handler);

@@ -54,6 +54,31 @@ final class ContactService
         return $this->getById($newId);
     }
 
+    public function update(int $id, array $data): ContactDTO
+    {
+        $existing = $this->repository->findById($id);
+
+        if ($existing === null) {
+            throw new RuntimeException('Contacto no encontrado.', 404);
+        }
+
+        $validated = $this->validator->validate($data);
+
+        if ($this->repository->existsWithEmail($validated['email'], $id)) {
+            throw new RuntimeException('Ya existe un contacto con ese email.', 409);
+        }
+
+        $contactData = [
+            'first_name' => $validated['first_name'],
+            'last_name'  => $validated['last_name'],
+            'email'      => $validated['email'],
+        ];
+
+        $this->repository->update($id, $contactData, $validated['phones']);
+
+        return $this->getById($id);
+    }
+
     public function delete(int $id): void
     {
         if (!$this->repository->delete($id)) {

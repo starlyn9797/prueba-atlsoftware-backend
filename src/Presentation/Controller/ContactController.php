@@ -41,6 +41,13 @@ final class ContactController
         JsonResponse::created($this->serializeContact($contact));
     }
 
+    public function update(string $id): void
+    {
+        $body = $this->getRequestBody();
+        $contact = $this->service->update((int) $id, $body);
+        JsonResponse::success($this->serializeContact($contact));
+    }
+
     public function destroy(string $id): void
     {
         $this->service->delete((int) $id);
