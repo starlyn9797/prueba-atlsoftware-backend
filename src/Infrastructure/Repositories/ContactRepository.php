@@ -62,20 +62,7 @@ final class ContactRepository implements ContactRepositoryInterface
 
             $contactId = (int) $this->pdo->lastInsertId();
 
-            if (count($phones) > 0) {
-                $phoneStatement = $this->pdo->prepare('
-                    INSERT INTO phones (contact_id, phone_number, label)
-                    VALUES (:contact_id, :phone_number, :label)
-                ');
-
-                foreach ($phones as $phone) {
-                    $phoneStatement->execute([
-                        'contact_id'   => $contactId,
-                        'phone_number' => $phone['phone_number'],
-                        'label'        => $phone['label'] ?? 'mobile',
-                    ]);
-                }
-            }
+            $this->insertPhones($contactId, $phones);
 
             $this->pdo->commit();
             return $contactId;
@@ -118,20 +105,7 @@ final class ContactRepository implements ContactRepositoryInterface
             $this->pdo->prepare('DELETE FROM phones WHERE contact_id = :contact_id')
                 ->execute(['contact_id' => $id]);
 
-            if (count($phones) > 0) {
-                $phoneStatement = $this->pdo->prepare('
-                    INSERT INTO phones (contact_id, phone_number, label)
-                    VALUES (:contact_id, :phone_number, :label)
-                ');
-
-                foreach ($phones as $phone) {
-                    $phoneStatement->execute([
-                        'contact_id'   => $id,
-                        'phone_number' => $phone['phone_number'],
-                        'label'        => $phone['label'] ?? 'mobile',
-                    ]);
-                }
-            }
+            $this->insertPhones($id, $phones);
 
             $this->pdo->commit();
             return true;
@@ -139,6 +113,26 @@ final class ContactRepository implements ContactRepositoryInterface
         } catch (\Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
+        }
+    }
+
+    private function insertPhones(int $contactId, array $phones): void
+    {
+        if (count($phones) === 0) {
+            return;
+        }
+
+        $stmt = $this->pdo->prepare('
+            INSERT INTO phones (contact_id, phone_number, label)
+            VALUES (:contact_id, :phone_number, :label)
+        ');
+
+        foreach ($phones as $phone) {
+            $stmt->execute([
+                'contact_id'   => $contactId,
+                'phone_number' => $phone['phone_number'],
+                'label'        => $phone['label'] ?? 'mobile',
+            ]);
         }
     }
 
