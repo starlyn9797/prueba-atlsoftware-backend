@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\DTO;
+namespace App\Domain\DTOs;
 
 final readonly class ContactDTO
 {

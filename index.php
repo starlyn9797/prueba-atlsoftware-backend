@@ -6,11 +6,11 @@ require_once __DIR__ . '/autoload.php';
 
 use App\Application\Services\ContactService;
 use App\Application\Validators\ContactValidator;
-use App\Infrastructure\Config\Database;
+use App\Infrastructure\Configs\Database;
 use App\Infrastructure\Repositories\ContactRepository;
-use App\Presentation\Controller\ContactController;
-use App\Presentation\Http\JsonResponse;
-use App\Presentation\Http\Router;
+use App\Presentation\Controllers\ContactController;
+use App\Presentation\Http\Responses\JsonResponse;
+use App\Presentation\Http\Routes\Router;
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');

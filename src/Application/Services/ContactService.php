@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
-use App\Domain\DTO\ContactDTO;
-use App\Domain\DTO\PhoneDTO;
+use App\Domain\DTOs\ContactDTO;
+use App\Domain\DTOs\PhoneDTO;
 use App\Domain\Interfaces\ContactRepositoryInterface;
 use App\Domain\Interfaces\ContactValidatorInterface;
 use RuntimeException;

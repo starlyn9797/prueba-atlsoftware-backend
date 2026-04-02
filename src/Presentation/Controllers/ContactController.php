@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Controller;
+namespace App\Presentation\Controllers;
 
 use App\Application\Services\ContactService;
-use App\Domain\DTO\ContactDTO;
-use App\Domain\DTO\PhoneDTO;
-use App\Presentation\Http\JsonResponse;
+use App\Domain\DTOs\ContactDTO;
+use App\Domain\DTOs\PhoneDTO;
+use App\Presentation\Http\Responses\JsonResponse;
 use RuntimeException;
 
 final class ContactController

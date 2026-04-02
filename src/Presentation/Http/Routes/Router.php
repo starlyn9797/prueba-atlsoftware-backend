@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http;
+namespace App\Presentation\Http\Routes;
+
+use App\Presentation\Http\Responses\JsonResponse;
 
 final class Router
 {
