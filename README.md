@@ -43,6 +43,7 @@ http://localhost/prueba/contacts-api/contacts
 | GET | /contacts | Listar todos los contactos |
 | GET | /contacts/{id} | Obtener un contacto por ID |
 | POST | /contacts | Crear un nuevo contacto |
+| PUT | /contacts/{id} | Actualizar un contacto |
 | DELETE | /contacts/{id} | Eliminar un contacto |
 
 ## Ejemplos para Postman
@@ -65,7 +66,24 @@ Body:
 }
 ```
 
-### Response 201
+### Actualizar contacto (PUT)
+
+URL: `http://localhost/prueba/contacts-api/contacts/1`
+Headers: `Content-Type: application/json`
+Body:
+
+```json
+{
+    "first_name": "Juan Carlos",
+    "last_name": "Pérez",
+    "email": "juancarlos@ejemplo.com",
+    "phones": [
+        { "phone_number": "+1234567890", "label": "mobile" }
+    ]
+}
+```
+
+### Response 201 (POST) / 200 (PUT)
 
 ```json
 {
@@ -101,27 +119,27 @@ Body:
 ## Arquitectura
 
 ```
-Presentation   → Controller, Router, JsonResponse
-Application    → ContactService, ContactValidator
-Domain         → ContactDTO, PhoneDTO, Interfaces
-Infrastructure → ContactRepository, Database, Config
+Presentation   → Controllers, Http (Routes, Responses)
+Application    → Services, Validators
+Domain         → DTOs, Interfaces
+Infrastructure → Repositories, Configs
 ```
 
 ```
     ┌──────────────────────┐
-    │     Presentation     │  Controller / Http
+    │     Presentation     │  Controllers / Http
     └──────────┬───────────┘
                │
     ┌──────────▼───────────┐
-    │     Application      │  Services / Validator
+    │     Application      │  Services / Validators
     └──────────┬───────────┘
                │
     ┌──────────▼───────────┐
-    │       Domain         │  DTO / Interfaces
+    │       Domain         │  DTOs / Interfaces
     └──────────┬───────────┘
                │
     ┌──────────▼───────────┐
-    │    Infrastructure    │  Repositories / Config
+    │    Infrastructure    │  Repositories / Configs
     └──────────────────────┘
 ```
 
@@ -132,34 +150,70 @@ contacts-api/
 ├── .htaccess
 ├── index.php
 ├── autoload.php
-├── router.php
+├── composer.json
+├── phpunit.xml
 ├── config/
 │   └── database.php
 ├── database/
 │   └── schema.sql
-└── src/
-    ├── Presentation/
-    │   ├── Controller/
-    │   │   └── ContactController.php
-    │   └── Http/
-    │       ├── Router.php
-    │       └── JsonResponse.php
-    ├── Application/
-    │   ├── Services/
-    │   │   └── ContactService.php
-    │   └── Validator/
-    │       └── ContactValidator.php
-    ├── Domain/
-    │   ├── DTO/
-    │   │   ├── ContactDTO.php
-    │   │   └── PhoneDTO.php
-    │   └── Interfaces/
-    │       ├── ContactRepositoryInterface.php
-    │       └── ContactValidatorInterface.php
-    └── Infrastructure/
-        ├── Config/
-        │   └── Database.php
-        └── Repositories/
-            └── ContactRepository.php
+├── src/
+│   ├── Presentation/
+│   │   ├── Controllers/
+│   │   │   └── ContactController.php
+│   │   └── Http/
+│   │       ├── Routes/
+│   │       │   └── Router.php
+│   │       └── Responses/
+│   │           └── JsonResponse.php
+│   ├── Application/
+│   │   ├── Services/
+│   │   │   └── ContactService.php
+│   │   └── Validators/
+│   │       └── ContactValidator.php
+│   ├── Domain/
+│   │   ├── DTOs/
+│   │   │   ├── ContactDTO.php
+│   │   │   └── PhoneDTO.php
+│   │   └── Interfaces/
+│   │       ├── ContactRepositoryInterface.php
+│   │       └── ContactValidatorInterface.php
+│   └── Infrastructure/
+│       ├── Configs/
+│       │   └── Database.php
+│       └── Repositories/
+│           └── ContactRepository.php
+└── tests/
+    └── Unit/
+        ├── Http/
+        │   └── RouterTest.php
+        ├── Services/
+        │   └── ContactServiceTest.php
+        └── Validators/
+            └── ContactValidatorTest.php
 ```
-"# prueba-atlsoftware-backend" 
+
+## Tests
+
+El proyecto utiliza PHPUnit 10 para tests unitarios.
+
+### Instalar dependencias
+
+```bash
+php composer.phar install
+```
+
+### Ejecutar tests
+
+```bash
+php vendor/bin/phpunit --testdox
+```
+
+### Cobertura de tests
+
+| Componente | Tests | Tipo |
+|---|---|---|
+| ContactValidator | 15 | Unitario |
+| ContactService | 14 | Unitario (con mocks) |
+| Router | 9 | Unitario |
+| **Total** | **38 tests, 63 assertions** | |
+
