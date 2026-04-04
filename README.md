@@ -162,4 +162,29 @@ contacts-api/
         └── Repositories/
             └── ContactRepository.php
 ```
-"# prueba-atlsoftware-backend" 
+
+## Tests
+
+El proyecto utiliza PHPUnit 10 para tests unitarios.
+
+### Instalar dependencias
+
+```bash
+php composer.phar install
+```
+
+### Ejecutar tests
+
+```bash
+php vendor/bin/phpunit --testdox
+```
+
+### Cobertura de tests
+
+| Componente | Tests | Tipo |
+|---|---|---|
+| ContactValidator | 15 | Unitario |
+| ContactService | 14 | Unitario (con mocks) |
+| Router | 9 | Unitario |
+| **Total** | **38 tests, 63 assertions** | |
+
